@@ -1,26 +1,21 @@
-import { prisma } from "../../../../lib/db"
-import { auth } from "../../../../auth"
-    
-export async function DELETE(request, { params }) {
+import { prisma } from "../../../../lib/db";
+import { withAuth } from "../../../../lib/api-helpers";
 
-    const session = await auth();
+export const DELETE = withAuth(async (request, context, session) => {
 
-    if (!session) {
-        return Response.json({ error: "Ошибка авторизации"}, { status: 401})
-    };
-
-    const { id } = await params;
+    const { id } = await context.params; 
 
     const post = await prisma.post.findUnique({
         where: { id }
     });
 
-    if (!post || post.authorId !== session?.user?.id) {
+    if (!post || post.authorId !== session.user.id) {
         return Response.json({ error: "Нет доступа"}, { status: 403})
-    };
+    }
 
     await prisma.post.delete({
         where: { id }
     });
-    return Response.json({ ok:true });
-}
+    
+    return Response.json({ ok: true });
+});

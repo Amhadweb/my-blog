@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import PostForm from "../components/PostForm"
 import { prisma } from "../lib/db"
 import DeletePostButton from "../components/DeletePostButton"
+import { truncate } from "../lib/utils"
 
 export const instant = false
 export default async function Home() {
@@ -64,7 +65,7 @@ export default async function Home() {
               </div>
 
               <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                {post.content}
+                {truncate(post.content, 100)}
               </p>
             </div>
           ))
